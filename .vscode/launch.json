@@ -1,0 +1,40 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "main",
+            "type": "python",
+            "request": "launch",
+            "program": "main.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "test_parallel",
+            "type": "python",
+            "request": "launch",
+            "program": "test_parallel.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "test_python_polygon",
+            "type": "python",
+            "request": "launch",
+            "module": "polygon.test_python_polygon",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },        
+        {
+            "name": "test_python_polygon_optimized",
+            "type": "python",
+            "request": "launch",
+            "module": "polygon.test_python_polygon_optimized",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+    ]
+}

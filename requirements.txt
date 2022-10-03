@@ -1,0 +1,5 @@
+shapely
+numba
+jupyter
+pygeos
+ray[default]
