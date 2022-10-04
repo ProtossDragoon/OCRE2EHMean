@@ -124,11 +124,7 @@ class ApproachSort(Approach):
             assert len(pred.cond_intersect()) == len(pred.matched)
             for e in pred.cond_intersect():
                 if self.is_matched(pred, e):
-                    self.add_pair(pred, e) # 방법1
-        """for pred in self.preds:
-            for e in pred.matched:
-                if self.is_matched(pred, e):
-                    self.add_pair(pred, e)""" # 방법2 (방법1과 시간복잡도 및 퍼포먼스 동일함)
+                    self.add_pair(pred, e)
         e = time.time()
         self.logger.debug(f'matching dt: {e-s:.3f}(s)')
 
@@ -165,11 +161,7 @@ class ApproachSort(Approach):
         for gt in self.gts:
             for e in gt.cond_intersect():
                 if self.is_matched(e, gt):
-                    self.add_pair(e, gt) # 방법1
-        """for gt in self.gts:
-            for e in gt.matched:
-                if self.is_matched(e, gt):
-                    self.add_pair(e, gt)""" # 방법2 (방법1과 시간복잡도 및 퍼포먼스 동일함)
+                    self.add_pair(e, gt)
         e = time.time()
         self.logger.debug(f'matching dt: {e-s:.3f}(s)')
 
