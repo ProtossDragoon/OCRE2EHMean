@@ -9,6 +9,7 @@ import tqdm
 import log
 import runtime
 import approach
+import matrix
 from approach import start
 from parallel import start_parallel, wait
 
@@ -16,7 +17,7 @@ from parallel import start_parallel, wait
 class RaySpeedTest(unittest.TestCase):
     
     def setUp(self):
-        self.image_ids = range(1, 10)
+        self.image_ids = range(0, 10)
     
     def dt_sigle_core(self, *args, **kwargs) -> float:
         print('Single-core processing start.')
@@ -37,10 +38,42 @@ class RaySpeedTest(unittest.TestCase):
             promise_li.append(start_parallel.remote(
                 image_id, *args, **kwargs
             ))
-        wait(promise_li)
+        _ = wait(promise_li)
         e = time.time()
         time_multi_process = e - s
         return time_multi_process
+
+    def test_parallel(self):
+        res_li_singlecore = []
+        for image_id in self.image_ids:
+            res_li_singlecore.append(start(
+                image_id, 
+                runtime.PythonRuntime, 
+                approach.ApproachSort,
+            ))
+        res_matrix_singlecore = matrix.Matrix.merge(res_li_singlecore)
+        promise_li = []
+        for image_id in self.image_ids:
+            promise_li.append(start_parallel.remote(
+                image_id, 
+                runtime.PythonRuntime, 
+                approach.ApproachSort,
+            ))
+        res_li_multicore = wait(promise_li, lambda x: x)
+        res_matrix_multicore = matrix.Matrix.merge(res_li_multicore)
+        self.assertEqual(
+            res_matrix_singlecore.precision,
+            res_matrix_multicore.precision,
+        )
+        self.assertEqual(
+            res_matrix_singlecore.recall,
+            res_matrix_multicore.recall,
+        )
+        self.assertEqual(
+            res_matrix_singlecore.f1,
+            res_matrix_multicore.f1,
+        )
+        
 
     def test_parallel_performance(self):
         with self.subTest('Naive Approach, No Optimization'):
