@@ -26,7 +26,7 @@ def wait(
     
     Args:
         promise_li (list): promise 객체들이 저장된 리스트.
-        callback_fn (function): 처리 완료된 프로세스의 함수 반환값 리스트를 입력으로 받는 함수.
+        callback_fn (function): 처리 완료된 프로세스의 함수 반환값을 입력으로 받는 함수.
 
     Returns:
         list: 모든 프로세스에 대해 처리를 완료한 함수의 반환값들을 담고 있는 리스트.
@@ -36,9 +36,10 @@ def wait(
     _bar = (_ for _ in tqdm.tqdm(range(0, n_promise)))
     while promise_li:
         _before = len(promise_li)
-        done_id, promise_li = ray.wait(promise_li)
+        done_ids, promise_li = ray.wait(promise_li)
         if callback_fn:
-            ret.append(callback_fn(done_id))
+            for done_id in done_ids:
+                ret.append(callback_fn(ray.get(done_id)))
         _after = len(promise_li)
         for _ in range(_before - _after):
             next(_bar)
