@@ -7,7 +7,6 @@ from approach import Approach
 from approach.data_loader_base import BaseDataLoader
 from container.linked_list import Node
 import parse
-import matrix
 
 
 class NodeV2(Node):
@@ -246,14 +245,3 @@ class ApproachSort(Approach):
                     _r = _mid
             for pred in sorted_preds[:_l]:
                 fill(gt, pred, cond)
-
-    def is_matched(self, pred:Node, gt:Node):
-        self._n_calculation += 1
-        if matrix.Calculation.cal_iou(pred.polygon, gt.polygon) > 0.5:
-            return True
-        else:
-            return False
-
-    def cal_matrix(self):
-        for gt, pred in self.yield_pair():
-            self.update(gt.polygon, pred.polygon, pred.sentence, gt.sentence, check_iou=False)

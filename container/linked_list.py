@@ -9,7 +9,7 @@ from runtime import GlobalRuntime
 import polygon.shapely_polygon as shapely_polygon
 
 WARNING_ONCE = True
-
+DONT_CARE = ''
 
 class Node():
     def __init__(
@@ -22,6 +22,7 @@ class Node():
         **kwargs,
     ):
         global WARNING_ONCE
+        global DONT_CARE
         self.logger = logging.getLogger(self.__class__.__name__)
         if polygon:
             if GlobalRuntime.is_numba_runtime():
@@ -37,6 +38,9 @@ class Node():
         self.left_top = left_top
         self.right_bottom = right_bottom
         self.sentence = sentence
+        self.is_connected = False
+        if self.sentence == DONT_CARE:
+            self.is_connected = True
         self.prev = None
         self.next = None
 

@@ -7,7 +7,6 @@ from approach import Approach
 from approach.data_loader_base import BaseDataLoader
 from container.linked_list import Node, LinkedList
 import parse
-import matrix
 
 
 class NavieApproachDataLoader(BaseDataLoader):
@@ -52,11 +51,19 @@ class ApproachNaive(Approach):
         start = time.time()
 
         s = time.time()
+        intersect_li = []
         for pred in self.preds:
             for gt in self.gts:
                 if self.is_matched(pred, gt):
-                    self.add_pair(pred, gt)        
-        e = time.time()        
+                    intersect_li.append((pred, gt))
+        e = time.time()
+        self.logger.debug(f'filtering dt: {e-s:.3f}(s)')
+
+        s = time.time()
+        for pred, gt in intersect_li:
+            if self.is_matched(pred, gt):
+                self.add_pair(pred, gt)
+        e = time.time()
         self.logger.debug(f'matching dt: {e-s:.3f}(s)')
 
         s = time.time()
@@ -69,13 +76,11 @@ class ApproachNaive(Approach):
         self.logger.info(f'Found {len(self.pairs)} pairs. (F1: {self.matrix.f1:.2f})')
         return self.matrix
 
-    def is_matched(self, pred:Node, gt:Node):
-        self._n_calculation += 1
-        if matrix.Calculation.cal_iou(pred.polygon, gt.polygon) > 0.5:
-            return True
-        else:
-            return False
-
-    def cal_matrix(self):
-        for gt, pred in self.yield_pair():
-            self.update(gt.polygon, pred.polygon, pred.sentence, gt.sentence, check_iou=False)
+    def is_intersect(self, pred:Node, gt:Node):
+        # case 1
+        a = (pred.left_top.x <= gt.right_bottom.x)
+        b = (pred.left_top.y <= gt.right_bottom.y)
+        # case 2
+        c = (pred.right_bottom.x >= gt.left_top.x)
+        d = (pred.right_bottom.y >= gt.left_top.y)
+        return (a and b) or (c and d)

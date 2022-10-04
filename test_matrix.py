@@ -45,66 +45,28 @@ class TestIoU(unittest.TestCase):
                 yield parse.parse_data(line)
                 line = f.readline()
 
-    def test_fn_iou(self):
-        for pred, gt in zip(self.read_pred_data(), self.read_gt_data()):
-            polygon_pred = shapely_polygon.get_polygon(*pred[:-1])
-            polygon_gt = shapely_polygon.get_polygon(*gt[:-1])
-            iou = matrix.Calculation.cal_iou(polygon_pred, polygon_gt)
-            # print(f'{matrix.is_true_positive(polygon_pred, polygon_gt)} (IoU: {iou:.3f})')
-            # self.assertEqual(iou, 1.0)
-
-    def test_fn_end2end(self):
-        polygon1, polygon2 = self.generate_fake_polygon_pair_iou_100()
-        ret = matrix.Calculation.end2end(polygon1, polygon2, '안녕', '친구들')
-        self.assertEqual(ret, [0,])
-        ret = matrix.Calculation.end2end(polygon1, polygon2, '안녕', '안녕')
-        self.assertEqual(ret, [1,])
-        ret = matrix.Calculation.end2end(polygon1, polygon2, '안녕', '친구들 안녕')
-        self.assertEqual(ret, [0, 0,])
-        ret = matrix.Calculation.end2end(polygon1, polygon2, '안녕 친구들', '친구들')
-        self.assertEqual(ret, [0, 0,])
-        ret = matrix.Calculation.end2end(polygon1, polygon2, '친구들 안녕', '잘가 안녕')
-        self.assertEqual(ret, [0, 1,])
-        ret = matrix.Calculation.end2end(polygon1, polygon2, '안녕', '안녕 친구들')
-        self.assertEqual(ret, [1, 0,])
-        ret = matrix.Calculation.end2end(polygon1, polygon2, '친구들 안녕', '친구들')
-        self.assertEqual(ret, [1, 0,])
-        ret = matrix.Calculation.end2end(polygon1, polygon2, '친구들 안녕', '친구들 안녕')
-        self.assertEqual(ret, [1, 1,])
-        polygon1, polygon2 = self.generate_fake_polygon_pair_iou_30()
-        ret = matrix.Calculation.end2end(polygon1, polygon2, '안녕', '친구들')
-        self.assertEqual(ret, [])
-        ret = matrix.Calculation.end2end(polygon1, polygon2, '안녕', '안녕')
-        self.assertEqual(ret, [])
-
-    def test_fn_metric(self):
-        polygon1, polygon2 = self.generate_fake_polygon_pair_iou_100()
-        m = matrix.Matrix()
-        m.update(polygon1, polygon2, '안녕', '친구들')
-        self.assertEqual(m.precision, 0.0)
-        self.assertEqual(m.recall, 0.0)
-        self.assertEqual(m.f1, 0.0)
-        m = matrix.Matrix()
-        m.update(polygon1, polygon2, '안녕', '안녕')
-        self.assertEqual(m.precision, 1.0)
-        self.assertEqual(m.recall, 1.0)
-        self.assertEqual(m.f1, 1.0)
-        m = matrix.Matrix()
-        m.update(polygon1, polygon2, '안녕', '안녕')
-        m.update(polygon1, polygon2, '안녕', '친구들')
-        self.assertEqual(m.precision, 0.5)
-        self.assertEqual(m.recall, 0.5)
-        self.assertEqual(m.f1, 0.5)
-
-    def test_pipeline(self):
-        m = matrix.Matrix()
-        for pred, gt in zip(self.read_pred_data(), self.read_gt_data()):
-            polygon_pred = shapely_polygon.get_polygon(*pred[:-1])
-            polygon_gt = shapely_polygon.get_polygon(*gt[:-1])
-            m.update(polygon_pred, polygon_gt, pred[-1], gt[-1])
-        print(f'Precision: {m.precision:.3f}')
-        print(f'Recall: {m.recall:.3f}')
-        print(f'F1: {m.f1:.3f}')
+    def test_text_recognition(self):
+        sentence_preds = [
+            '안녕', '안녕', '안녕',
+            '안녕 친구들', '친구들 안녕', '안녕',
+            '친구들 안녕', '친구들 안녕',
+        ]
+        sentence_gts = [
+            '친구들', '안녕', '친구들 안녕',
+            '친구들', '잘가 안녕', '안녕 친구들',
+            '친구들', '친구들 안녕',
+        ]
+        expected_li = [
+            [0,], [1,], [0, 0,],
+            [0, 0,], [0, 1,], [1, 0,],
+            [1, 0,], [1, 1,]
+        ]
+        for (sentence_pred, sentence_gt, expected) in zip(
+            sentence_preds, sentence_gts, expected_li):
+            ret = matrix.Calculation.text_recognition(sentence_pred, sentence_gt)
+            self.assertEqual(ret, expected)
+            ret = matrix.Calculation.text_recognition(sentence_gt, sentence_pred)
+            self.assertEqual(ret, expected)
 
 
 if __name__ == '__main__':
