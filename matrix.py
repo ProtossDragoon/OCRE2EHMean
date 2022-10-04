@@ -71,7 +71,6 @@ class Calculation():
         return True if iou > 0.5 else False
 
     @staticmethod
-    @numba.jit(nopython=True, cache=True)
     def _is_ture_positive_numba(polygon1, polygon2):
         iou = Calculation.cal_iou(polygon1, polygon2)
         return True if iou > 0.5 else False
