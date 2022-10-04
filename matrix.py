@@ -15,8 +15,8 @@ from polygon.python_polygon_optimized import iou as iou_optimized
 
 class Calculation():
 
-    @classmethod
-    def transcription_equal(cls, sentence_1, sentence_2):
+    @staticmethod
+    def transcription_equal(sentence_1, sentence_2):
         if GlobalRuntime.is_python_runtime():
             return Calculation._transcription_equal_python(sentence_1, sentence_2)
         elif GlobalRuntime.is_numba_runtime():
@@ -56,8 +56,8 @@ class Calculation():
                 result.append(0)
         return result
 
-    @classmethod
-    def is_true_positive(cls, polygon1, polygon2):
+    @staticmethod
+    def is_true_positive(polygon1, polygon2):
         if GlobalRuntime.is_python_runtime():
             return Calculation._is_true_positive_python(polygon1, polygon2)
         elif GlobalRuntime.is_numba_runtime():
@@ -88,8 +88,8 @@ class Calculation():
     def _is_true_positive_jax(polygon1, polygon2):
         raise NotImplementedError
 
-    @classmethod
-    def end2end(cls, polygon1, polygon2, sentence_1, sentence_2, check_iou=True):
+    @staticmethod
+    def end2end(polygon1, polygon2, sentence_1, sentence_2, check_iou=True):
         if GlobalRuntime.is_python_runtime():
             return Calculation._end2end_python(polygon1, polygon2, sentence_1, sentence_2, check_iou)
         elif GlobalRuntime.is_numba_runtime():
@@ -117,8 +117,8 @@ class Calculation():
         else:
             return []
 
-    @classmethod
-    def cal_iou(cls, polygon1, polygon2):
+    @staticmethod
+    def cal_iou(polygon1, polygon2):
         if GlobalRuntime.is_python_runtime():
             return Calculation._cal_iou_python(polygon1, polygon2)
         elif GlobalRuntime.is_numba_runtime():
@@ -188,3 +188,12 @@ class Matrix():
             self.n_words_pred += len(sentence_pred.split())
             self.n_words_gt += len(sentence_gt.split())
             self.n_words_correct += sum(result_mask)
+            
+    @classmethod
+    def merge(cls, matrix_list: list):
+        ret = cls()
+        for matrix in matrix_list:
+            ret.n_words_correct += matrix.n_words_correct
+            ret.n_words_gt += matrix.n_words_gt
+            ret.n_words_pred += matrix.n_words_pred
+        return ret
