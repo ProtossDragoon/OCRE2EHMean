@@ -37,9 +37,10 @@ def wait(
     while promise_li:
         _before = len(promise_li)
         done_ids, promise_li = ray.wait(promise_li)
-        if callback_fn:
-            for done_id in done_ids:
-                ret.append(callback_fn(ray.get(done_id)))
+        if not callback_fn:
+            callback_fn = lambda x: x
+        for done_id in done_ids:
+            ret.append(callback_fn(ray.get(done_id)))
         _after = len(promise_li)
         for _ in range(_before - _after):
             next(_bar)
