@@ -45,7 +45,7 @@ class TestIoU(unittest.TestCase):
                 yield parse.parse_data(line)
                 line = f.readline()
 
-    def test_text_recognition(self):
+    def test_transcription_equal(self):
         sentence_preds = [
             '안녕', '안녕', '안녕',
             '안녕 친구들', '친구들 안녕', '안녕',
@@ -63,9 +63,9 @@ class TestIoU(unittest.TestCase):
         ]
         for (sentence_pred, sentence_gt, expected) in zip(
             sentence_preds, sentence_gts, expected_li):
-            ret = matrix.Calculation.text_recognition(sentence_pred, sentence_gt)
+            ret = matrix.Calculation.transcription_equal(sentence_pred, sentence_gt)
             self.assertEqual(ret, expected)
-            ret = matrix.Calculation.text_recognition(sentence_gt, sentence_pred)
+            ret = matrix.Calculation.transcription_equal(sentence_gt, sentence_pred)
             self.assertEqual(ret, expected)
 
 

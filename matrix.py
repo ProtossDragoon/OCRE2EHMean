@@ -89,23 +89,6 @@ class Calculation():
         raise NotImplementedError
 
     @staticmethod
-    def text_recognition(sentence_1, sentence_2):
-        if GlobalRuntime.is_python_runtime():
-            return Calculation._text_recognition_python(sentence_1, sentence_2)
-        elif GlobalRuntime.is_numba_runtime():
-            return Calculation._text_recognition_numba(sentence_1, sentence_2)
-        else:
-            raise NotImplementedError(f'Not implemented  {GlobalRuntime.runtime}')
-
-    @staticmethod
-    def _text_recognition_python(sentence_1, sentence_2):
-        return Calculation.transcription_equal(sentence_1, sentence_2)
-
-    @staticmethod
-    def _text_recognition_numba(sentence_1, sentence_2):
-        return Calculation.transcription_equal(sentence_1, sentence_2)
-
-    @staticmethod
     def cal_iou(polygon1, polygon2):
         if GlobalRuntime.is_python_runtime():
             return Calculation._cal_iou_python(polygon1, polygon2)
@@ -181,7 +164,7 @@ class Matrix():
         if check_iou:
             iou_tp = Calculation.is_iou_tp(pred.polygon, gt.polygon)
         if iou_tp:
-            result_mask = Calculation.text_recognition(pred.sentence, gt.sentence)
+            result_mask = Calculation.transcription_equal(pred.sentence, gt.sentence)
         if not result_mask:
             # result_mask 가 비어 있으면
             # 문자 영역을 올바르게 찾아내지 못한 것임.
