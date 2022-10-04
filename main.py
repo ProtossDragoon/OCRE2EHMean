@@ -14,7 +14,7 @@ import parallel
 if __name__ == '__main__':
     log.set_default_logger('WARNING')
     promise_li = []
-    for image_id in tqdm.tqdm(range(0, 30)):
+    for image_id in tqdm.tqdm(range(0, 10892)):
         promise_li.append(parallel.start_parallel.remote(
             image_id,
             runtime.NumbaRuntime, 

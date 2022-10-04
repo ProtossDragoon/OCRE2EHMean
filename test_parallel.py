@@ -17,7 +17,8 @@ from parallel import start_parallel, wait
 class RaySpeedTest(unittest.TestCase):
     
     def setUp(self):
-        self.image_ids = range(0, 10)
+        self.image_ids_miniset = range(0, 5)
+        self.image_ids = range(0, 50)
     
     def dt_sigle_core(self, *args, **kwargs) -> float:
         print('Single-core processing start.')
@@ -45,7 +46,7 @@ class RaySpeedTest(unittest.TestCase):
 
     def test_parallel(self):
         res_li_singlecore = []
-        for image_id in self.image_ids:
+        for image_id in self.image_ids_miniset:
             res_li_singlecore.append(start(
                 image_id, 
                 runtime.PythonRuntime, 
@@ -53,7 +54,7 @@ class RaySpeedTest(unittest.TestCase):
             ))
         res_matrix_singlecore = matrix.Matrix.merge(res_li_singlecore)
         promise_li = []
-        for image_id in self.image_ids:
+        for image_id in self.image_ids_miniset:
             promise_li.append(start_parallel.remote(
                 image_id, 
                 runtime.PythonRuntime, 
