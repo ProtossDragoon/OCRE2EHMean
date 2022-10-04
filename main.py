@@ -5,6 +5,7 @@ import tqdm
 # 프로젝트
 import approach
 import runtime
+import matrix
 
 # 프로젝트
 import parallel
@@ -19,4 +20,9 @@ if __name__ == '__main__':
             runtime.NumbaRuntime, 
             approach.ApproachSort,
         ))
-    parallel.wait(promise_li)
+    matrix_li = parallel.wait(promise_li)
+    metric = matrix.Matrix.merge(matrix_li)
+    print(f'Found {metric.n_words_pred} preds and {metric.n_words_gt} gts')
+    print(f'Precision:\t {metric.precision:4f}')
+    print(f'Recall:   \t {metric.recall:4f}')
+    print(f'F1:       \t {metric.f1:4f}')
