@@ -1,9 +1,14 @@
+# 내장
+import logging
+
 # 서드파티
 import numpy as np
 
 # 프로젝트
-from runtime import GlobalRuntime, PythonRuntime
+from runtime import GlobalRuntime
 import polygon.shapely_polygon as shapely_polygon
+
+WARNING_ONCE = True
 
 
 class Node():
@@ -13,14 +18,22 @@ class Node():
         left_top:tuple,
         right_bottom:tuple,
         sentence:str,
+        use_shapely_type_polygon:bool = False,
         **kwargs,
     ):
+        global WARNING_ONCE
+        self.logger = logging.getLogger(self.__class__.__name__)
         if polygon:
             if GlobalRuntime.is_numba_runtime():
+                if use_shapely_type_polygon and WARNING_ONCE:
+                    self.logger.warning("Numba runtime does not support shapely type polygon. Automatically change to numpy type polygon.")
+                    WARNING_ONCE = False
                 self.polygon = np.array([list(point) for point in polygon])
             elif GlobalRuntime.is_python_runtime():
-                # self.polygon = shapely_polygon.get_polygon(*polygon)
-                self.polygon = polygon
+                if use_shapely_type_polygon:
+                    self.polygon = shapely_polygon.get_polygon(*polygon)
+                else:
+                    self.polygon = polygon
         self.left_top = left_top
         self.right_bottom = right_bottom
         self.sentence = sentence
