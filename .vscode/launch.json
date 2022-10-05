@@ -13,6 +13,14 @@
             "justMyCode": true
         },
         {
+            "name": "test_matrix",
+            "type": "python",
+            "request": "launch",
+            "program": "test_matrix.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
             "name": "test_parallel",
             "type": "python",
             "request": "launch",
