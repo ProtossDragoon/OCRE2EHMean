@@ -15,12 +15,13 @@ class NavieApproachDataLoader(BaseDataLoader):
         return self.load_data(image_id, split_char)
 
     def load_data(self, image_id, split_char): 
+        self.logger.debug(f'Start loading data')
         p = os.path.join(os.getcwd(), 'data', 'preprocessed', f'gt_{image_id}.txt')
         gts = LinkedList()
         with open(p, 'r') as f:
             line = f.readline()
             while line:
-                gt = parse.parse_data_extended(line, split_char)
+                gt = parse.parse_data(line, split_char)
                 gt = Node(**gt)
                 gts.append(gt)
                 line = f.readline()
@@ -29,7 +30,7 @@ class NavieApproachDataLoader(BaseDataLoader):
         with open(p, 'r') as f:
             line = f.readline()
             while line:
-                pred = parse.parse_data_extended(line, split_char)
+                pred = parse.parse_data(line, split_char)
                 pred = Node(**pred)
                 preds.append(pred)
                 line = f.readline()

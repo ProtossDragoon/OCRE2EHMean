@@ -61,12 +61,13 @@ class SortApproachDataLoader(BaseDataLoader):
         return self.load_data(image_id, split_char)
         
     def load_data(self, image_id, split_char):
+        self.logger.debug(f'Start loading data')
         p = os.path.join(os.getcwd(), 'data', 'preprocessed', f'gt_{image_id}.txt')
         gts = []
         with open(p, 'r') as f:
             line = f.readline()
             while line:
-                gt = parse.parse_data_extended(line, split_char)
+                gt = parse.parse_data(line, split_char)
                 gt = NodeV2(**gt)
                 gts.append(gt)
                 line = f.readline()
@@ -75,7 +76,7 @@ class SortApproachDataLoader(BaseDataLoader):
         with open(p, 'r') as f:
             line = f.readline()
             while line:
-                pred = parse.parse_data_extended(line, split_char)
+                pred = parse.parse_data(line, split_char)
                 pred = NodeV2(**pred)
                 preds.append(pred)
                 line = f.readline()

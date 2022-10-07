@@ -18,7 +18,7 @@ class RaySpeedTest(unittest.TestCase):
     
     def setUp(self):
         self.image_ids_miniset = range(0, 5)
-        self.image_ids = range(0, 50)
+        self.image_ids = range(0, 10)
     
     def dt_sigle_core(self, *args, **kwargs) -> float:
         print('Single-core processing start.')
@@ -46,7 +46,7 @@ class RaySpeedTest(unittest.TestCase):
 
     def test_parallel(self):
         res_li_singlecore = []
-        for image_id in self.image_ids_miniset:
+        for image_id in tqdm.tqdm(self.image_ids_miniset):
             res_li_singlecore.append(start(
                 image_id, 
                 runtime.PythonRuntime, 
