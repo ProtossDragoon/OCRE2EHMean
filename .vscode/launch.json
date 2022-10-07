@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "main",
+            "name": "pymain",
             "type": "python",
             "request": "launch",
             "program": "main.py",
@@ -13,7 +13,7 @@
             "justMyCode": true
         },
         {
-            "name": "test_matrix",
+            "name": "pytest_matrix",
             "type": "python",
             "request": "launch",
             "program": "test_matrix.py",
@@ -21,7 +21,7 @@
             "justMyCode": true
         },
         {
-            "name": "test_parallel",
+            "name": "pytest_parallel",
             "type": "python",
             "request": "launch",
             "program": "test_parallel.py",
@@ -29,7 +29,7 @@
             "justMyCode": true
         },
         {
-            "name": "test_python_polygon",
+            "name": "pytest_python_polygon",
             "type": "python",
             "request": "launch",
             "module": "polygon.test_python_polygon",
@@ -37,7 +37,7 @@
             "justMyCode": true
         },        
         {
-            "name": "test_python_polygon_optimized",
+            "name": "pytest_python_polygon_optimized",
             "type": "python",
             "request": "launch",
             "module": "polygon.test_python_polygon_optimized",
