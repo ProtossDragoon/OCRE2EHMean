@@ -9,7 +9,7 @@ import parse
 
 class TestDataUtil(unittest.TestCase):
     
-    def test_parse_data_extended(self):
+    def test_parse_data(self):
         split_char = ',  '
 
         p = os.path.join(os.path.dirname(__file__), 'data', 'mock', 'gt_extended.txt')
@@ -17,7 +17,7 @@ class TestDataUtil(unittest.TestCase):
             gt_it = iter(['·', '이것은 테스트입니다.', '이거, 잘, 동작하나요?'])
             line = f.readline()
             while line:
-                data_gt = parse.parse_data_extended(line, split_char)
+                data_gt = parse.parse_data(line, split_char)
                 self.assertEqual(data_gt['sentence'], next(gt_it))
                 line = f.readline()
         
@@ -26,12 +26,9 @@ class TestDataUtil(unittest.TestCase):
             prep_it = iter(['·', '제품명', ':'])
             line = f.readline()
             while line:
-                data_prep = parse.parse_data_extended(line, split_char)
+                data_prep = parse.parse_data(line, split_char)
                 self.assertEqual(data_prep['sentence'], next(prep_it))
                 line = f.readline()
-
-        self.assertEqual(data_gt['image_w'], data_prep['image_w'])
-        self.assertEqual(data_gt['image_h'], data_prep['image_h'])
 
 
 if __name__ == '__main__':
