@@ -12,7 +12,7 @@ class TestDataUtil(unittest.TestCase):
     def test_parse_data(self):
         split_char = ',  '
 
-        p = os.path.join(os.path.dirname(__file__), 'data', 'mock', 'gt_extended.txt')
+        p = os.path.join(os.path.dirname(__file__), 'data', 'mock', 'pred.txt')
         with open(p, 'r') as f:
             gt_it = iter(['·', '이것은 테스트입니다.', '이거, 잘, 동작하나요?'])
             line = f.readline()
@@ -21,7 +21,7 @@ class TestDataUtil(unittest.TestCase):
                 self.assertEqual(data_gt['sentence'], next(gt_it))
                 line = f.readline()
         
-        p = os.path.join(os.path.dirname(__file__), 'data', 'mock', 'pred_extended.txt')
+        p = os.path.join(os.path.dirname(__file__), 'data', 'mock', 'gt.txt')
         with open(p, 'r') as f:
             prep_it = iter(['·', '제품명', ':'])
             line = f.readline()
