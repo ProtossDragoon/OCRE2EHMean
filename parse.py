@@ -6,7 +6,8 @@ def parse_data(line, split_char=', '):
         (int(line[4]), int(line[5])), 
         (int(line[6]), int(line[7]))
     )
-    sentence = line[-1].strip('\n')
+    sentence = line[8:]
+    sentence = ''.join(sentence).strip('\n')
     left = min([p0[0], p1[0], p2[0], p3[0]])
     top = min([p0[1], p1[1], p2[1], p3[1]])
     left_top = (left, top)

@@ -9,7 +9,7 @@ from runtime import GlobalRuntime
 import polygon.shapely_polygon as shapely_polygon
 
 WARNING_ONCE = True
-DONT_CARE = ''
+DONT_CARE = '###'
 
 class Node():
     def __init__(

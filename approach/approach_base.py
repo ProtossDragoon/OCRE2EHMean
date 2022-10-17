@@ -60,6 +60,6 @@ def start(
     *args, **kwargs,
 ):
     runtime.GlobalRuntime.set_mode(runtime_)
-    gts, preds = approach_.load_data(image_id, split_char=',  ')
+    gts, preds = approach_.load_data(image_id, split_char=',')
     runner = approach_(gts, preds, *args, **kwargs)
     return runner.run()
