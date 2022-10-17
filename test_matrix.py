@@ -31,20 +31,6 @@ class TestIoU(unittest.TestCase):
         polygon_gt = shapely_polygon.get_polygon((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5))
         return polygon_pred, polygon_gt
 
-    def read_pred_data(self, path='./data/mock/pred.txt'):
-        with open(path, 'r') as f:
-            line = f.readline()
-            while line:
-                yield parse.parse_data(line)
-                line = f.readline()
-
-    def read_gt_data(self, path='./data/mock/gt.txt'):
-        with open(path, 'r') as f:
-            line = f.readline()
-            while line:
-                yield parse.parse_data(line)
-                line = f.readline()
-
     def test_transcription_equal(self):
         sentence_preds = [
             '안녕', '안녕', '안녕',
