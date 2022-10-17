@@ -188,7 +188,7 @@ Temporary Items
 
 # data
 data/preprocessed
-data/real
+data/real/*.json
 
 
 ##### Windows
