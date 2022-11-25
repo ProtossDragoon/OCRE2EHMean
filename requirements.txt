@@ -3,3 +3,4 @@ numba
 jupyter
 pygeos
 ray[default]
+tqdm
