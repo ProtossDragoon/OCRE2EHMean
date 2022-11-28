@@ -122,18 +122,34 @@ class Calculation():
 
 
 class Matrix():
+    
+    DONTCARE_INDICATOR = '###'
 
     def __init__(self):
-        self.n_words_pred = 0
-        self.n_words_gt = 0
-        self.n_words_matched_pred = 0
+        # NOTE: 전체 예측 bbox 의 수
+        self.n_words_pred = 0 
+        
+        # NOTE: 전체 정답 bbox 의 수 - don’t care bbox 의 수
+        self.n_words_gt = 0 
+        
+        # NOTE: (1) IoU > 0.5, (2) 텍스트 일치 → 정답값과 매칭 쌍이 생성된 예측 bbox 의 수
+        self.n_words_matched_pred = 0 
+        
+        # NOTE: (1) IoU > 0.5, (2) 텍스트 일치 → 예측값과 매칭 쌍이 생성된 정답 bbox 의 수
         self.n_words_matched_gt = 0
+        
+        # NOTE: 매칭 쌍이 생성되지 않은 bbox 중, (1) IoU > 0.5, ~(2) 인 대신 (3) dontcare bbox 에 예측을 제시한 bbox 의 수
+        self.n_words_passediou_but_dontcare_pred = 0 
     
     @property
     def precision(self):
         if self.n_words_pred == 0:
-            return 0
-        return self.n_words_matched_pred / self.n_words_pred
+            return 1
+        # NOTE: 전체 예측 bbox 의 수 - don’t care 가 아닌 예측 bbox 의 수
+        n_words_notdontcare = self.n_words_pred - self.n_words_passediou_but_dontcare_pred
+        if n_words_notdontcare == 0:
+            return 1
+        return self.n_words_matched_pred / n_words_notdontcare
 
     @property
     def recall(self):
@@ -153,7 +169,15 @@ class Matrix():
         # preds, gts are list or LinkedList
         for pred in preds:
             if pred.is_connected:
+                # pred: iou > 0.5, 
+                # sentence is equal
                 self.n_words_matched_pred += 1 
+            else:
+                if pred.is_connected_dontcare:
+                    # pred: iou > 0.5,
+                    # there is no gt connected to pred
+                    # only a iou > 0.5 gt is dontcare
+                    self.n_words_passediou_but_dontcare_pred += 1
         for gt in gts:
             if gt.is_connected:
                 self.n_words_matched_gt += 1
@@ -174,6 +198,15 @@ class Matrix():
                 # 찾아낸 단어들을 하나도 빠짐없이 맞추었다면
                 return True
             return False
+        
+    def is_dontcare(self, pred: Node, gt: Node, check_iou=True):
+        iou_tp = True
+        if check_iou:
+            iou_tp = Calculation.is_iou_tp(pred.polygon, gt.polygon)
+        if iou_tp:
+            if gt.sentence == Matrix.DONTCARE_INDICATOR:
+                return True
+            return False
 
     @classmethod
     def merge(cls, matrix_list: list):
@@ -183,4 +216,5 @@ class Matrix():
             ret.n_words_pred += matrix.n_words_pred
             ret.n_words_matched_gt += matrix.n_words_matched_gt
             ret.n_words_matched_pred += matrix.n_words_matched_pred
+            ret.n_words_passediou_but_dontcare_pred += matrix.n_words_passediou_but_dontcare_pred
         return ret

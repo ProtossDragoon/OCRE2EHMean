@@ -11,12 +11,14 @@ import parse
 
 class NavieApproachDataLoader(BaseDataLoader):
 
-    def load_data_for_numba_runtime(self, image_id, split_char):
-        return self.load_data(image_id, split_char)
+    def load_data_for_numba_runtime(self, image_id, split_char, *args, **kwargs):
+        return self.load_data(image_id, split_char, *args, **kwargs)
 
-    def load_data(self, image_id, split_char): 
+    def load_data(self, image_id, split_char, base_dir=None): 
         self.logger.debug(f'Start loading data')
-        p = os.path.join(os.getcwd(), 'data', 'preprocessed', f'gt_{image_id}.txt')
+        if base_dir is None:
+            base_dir = os.path.join(os.getcwd(), 'data', 'preprocessed')
+        p = os.path.join(base_dir, f'gt_{image_id}.txt')
         gts = LinkedList()
         with open(p, 'r') as f:
             line = f.readline()
@@ -25,7 +27,7 @@ class NavieApproachDataLoader(BaseDataLoader):
                 gt = Node(**gt)
                 gts.append(gt)
                 line = f.readline()
-        p = os.path.join(os.getcwd(), 'data', 'preprocessed', f'pred_{image_id}.txt')
+        p = os.path.join(base_dir, f'pred_{image_id}.txt')
         preds = LinkedList()
         with open(p, 'r') as f:
             line = f.readline()
@@ -55,15 +57,15 @@ class ApproachNaive(Approach):
         intersect_li = []
         for pred in self.preds:
             for gt in self.gts:
-                if self.is_matched(pred, gt):
-                    intersect_li.append((pred, gt))
+                if self.is_matched(gt, pred):
+                    intersect_li.append((gt, pred))
         e = time.time()
         self.logger.debug(f'filtering dt: {e-s:.3f}(s)')
 
         s = time.time()
-        for pred, gt in intersect_li:
-            if self.is_matched(pred, gt):
-                self.add_pair(pred, gt)
+        for gt, pred in intersect_li:
+            if self.is_matched(gt, pred):
+                self.add_pair(gt, pred)
         e = time.time()
         self.logger.debug(f'matching dt: {e-s:.3f}(s)')
 

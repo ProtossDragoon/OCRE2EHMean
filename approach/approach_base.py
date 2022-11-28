@@ -17,9 +17,12 @@ class Approach(abc.ABC):
         self.pairs = []
         self._n_calculation = 0
         self.matrix = matrix.Matrix()
-        self.matrix.n_words_gt = len(gts)
+        self.matrix.n_words_gt = len(gts) - self.get_dontcare_cnt()
         self.matrix.n_words_pred = len(preds)
         self.logger = logging.getLogger(self.__class__.__name__)
+
+    def get_dontcare_cnt(self):
+        return len([gt for gt in self.gts if gt.is_dontcare()])
 
     def is_matched(self, gt: Node, pred: Node):
         self._n_calculation += 1
@@ -33,9 +36,13 @@ class Approach(abc.ABC):
 
     def cal_matrix(self):
         for gt, pred in self.yield_pair():
+            # 이미 IoU 가 0.5 이상이라는 전제가 확보되어 있는 상태임.
             if self.matrix.is_end2end_tp(gt, pred, check_iou=False):
                 gt.is_connected = True
                 pred.is_connected = True
+            elif gt.is_dontcare():
+                gt.is_connected_dontcare = True
+                pred.is_connected_dontcare = True
         self.matrix.update(self.preds, self.gts)
 
     def yield_pair(self):
@@ -43,9 +50,9 @@ class Approach(abc.ABC):
             yield gt, pred
 
     @classmethod
-    def load_data(cls, image_id, split_char) -> tuple:
+    def load_data(cls, image_id, split_char, *args, **kwargs) -> tuple:
         data_loader = cls.get_data_loader()
-        return data_loader(image_id, split_char)
+        return data_loader(image_id, split_char, *args, **kwargs)
 
     @classmethod
     @abc.abstractmethod
@@ -60,6 +67,8 @@ def start(
     *args, **kwargs,
 ):
     runtime.GlobalRuntime.set_mode(runtime_)
-    gts, preds = approach_.load_data(image_id, split_char=',')
+    gts, preds = approach_.load_data(image_id, 
+                                     split_char=',',
+                                     base_dir=kwargs.pop('base_dir', None))
     runner = approach_(gts, preds, *args, **kwargs)
     return runner.run()

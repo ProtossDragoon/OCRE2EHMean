@@ -15,31 +15,31 @@ class BaseDataLoader(abc.ABC):
     def load_data(self, image_id, split_char):
         raise NotImplementedError
 
-    def load_data_for_python_runtime(self, image_id, split_char):
-        return self.load_data(image_id, split_char)
+    def load_data_for_python_runtime(self, image_id, split_char, *args, **kwargs):
+        return self.load_data(image_id, split_char, *args, **kwargs)
 
-    def load_data_for_numba_runtime(self, image_id, split_char):
+    def load_data_for_numba_runtime(self, image_id, split_char, *args, **kwargs):
         raise NotImplementedError
 
-    def load_data_for_numpy_runtime(self, image_id, split_char):
+    def load_data_for_numpy_runtime(self, image_id, split_char, *args, **kwargs):
         raise NotImplementedError
 
-    def load_data_for_cython_runtime(self, image_id, split_char):
+    def load_data_for_cython_runtime(self, image_id, split_char, *args, **kwargs):
         raise NotImplementedError
 
-    def load_data_for_jax_runtime(self, image_id, split_char):
+    def load_data_for_jax_runtime(self, image_id, split_char, *args, **kwargs):
         raise NotImplementedError
 
-    def __call__(self, image_id, split_char):
+    def __call__(self, image_id, split_char, *args, **kwargs):
         if GlobalRuntime.is_python_runtime():
-            return self.load_data_for_python_runtime(image_id, split_char)
+            return self.load_data_for_python_runtime(image_id, split_char, *args, **kwargs)
         elif GlobalRuntime.is_numba_runtime():
-            return self.load_data_for_numba_runtime(image_id, split_char)
+            return self.load_data_for_numba_runtime(image_id, split_char, *args, **kwargs)
         elif GlobalRuntime.is_numpy_runtime():
-            return self.load_data_for_numpy_runtime(image_id, split_char)
+            return self.load_data_for_numpy_runtime(image_id, split_char, *args, **kwargs)
         elif GlobalRuntime.is_cython_runtime():
-            return self.load_data_for_numpy_runtime(image_id, split_char)
+            return self.load_data_for_numpy_runtime(image_id, split_char, *args, **kwargs)
         elif GlobalRuntime.is_jax_runtime():
-            return self.load_data_for_jax_runtime(image_id, split_char)
+            return self.load_data_for_jax_runtime(image_id, split_char, *args, **kwargs)
         else:
             raise NotImplementedError(f'Not implemented runtime: {GlobalRuntime.runtime}')

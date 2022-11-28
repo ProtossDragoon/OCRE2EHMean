@@ -1,3 +1,6 @@
+# 내장
+import os
+
 # 프로젝트
 import polygon.shapely_polygon as shapely_polygon
 import parse
@@ -5,6 +8,7 @@ import matrix
 import unittest
 import runtime
 import log
+import approach
 
 
 class TestCalculation(unittest.TestCase):
@@ -54,6 +58,72 @@ class TestIoU(unittest.TestCase):
             ret = matrix.Calculation.transcription_equal(sentence_gt, sentence_pred)
             self.assertEqual(ret, expected)
 
+
+class TextMatrix(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.ret_0 = approach.start(
+            0,
+            runtime.PythonRuntime,
+            approach.ApproachNaive,
+            base_dir=os.path.join(os.getcwd(), 'data', 'test', 'preprocessed'))
+        cls.ret_1 = approach.start(
+            1,
+            runtime.PythonRuntime,
+            approach.ApproachNaive,
+            base_dir=os.path.join(os.getcwd(), 'data', 'test', 'preprocessed'))
+        cls.ret_2 = approach.start(
+            2,
+            runtime.PythonRuntime,
+            approach.ApproachNaive,
+            base_dir=os.path.join(os.getcwd(), 'data', 'test', 'preprocessed'))
+        cls.ret_3 = approach.start(
+            3,
+            runtime.PythonRuntime,
+            approach.ApproachNaive,
+            base_dir=os.path.join(os.getcwd(), 'data', 'test', 'preprocessed'))
+        cls.ret_4 = approach.start(
+            4,
+            runtime.PythonRuntime,
+            approach.ApproachNaive,
+            base_dir=os.path.join(os.getcwd(), 'data', 'test', 'preprocessed'))
+
+    def test_e2e_pricision(self):
+        with self.subTest('one-to-one'):
+            self.assertAlmostEqual(self.ret_0.precision, 1.0)
+        with self.subTest('one-to-one'):
+            self.assertAlmostEqual(self.ret_1.precision, 2/4)
+        with self.subTest('many-to-one'):
+            self.assertAlmostEqual(self.ret_2.precision, 2/5)
+        with self.subTest('many-to-one'):
+            self.assertAlmostEqual(self.ret_3.precision, 1)
+        with self.subTest('many-to-many'):
+            self.assertAlmostEqual(self.ret_4.precision, 3/4)
+
+    def test_e2e_recall(self):
+        with self.subTest('one-to-one'):
+            self.assertAlmostEqual(self.ret_0.recall, 1.0)
+        with self.subTest('one-to-one'):
+            self.assertAlmostEqual(self.ret_1.recall, 2/5)
+        with self.subTest('many-to-one'):
+            self.assertAlmostEqual(self.ret_2.recall, 1/1)
+        with self.subTest('many-to-one'):
+            self.assertAlmostEqual(self.ret_3.recall, 0)
+        with self.subTest('many-to-many'):
+            self.assertAlmostEqual(self.ret_4.recall, 2/3)
+
+    def test_e2e_f1(self):
+        with self.subTest('one-to-one'):
+            self.assertAlmostEqual(self.ret_0.f1, 1.0)
+        with self.subTest('one-to-one'):
+            self.assertAlmostEqual(self.ret_1.f1, 4/9)
+        with self.subTest('many-to-one'):
+            self.assertAlmostEqual(self.ret_2.f1, 2*(2/5)*(1/1)/((2/5)+(1/1)))
+        with self.subTest('many-to-one'):
+            self.assertAlmostEqual(self.ret_3.f1, 0)
+        with self.subTest('many-to-many'):
+            self.assertAlmostEqual(self.ret_4.f1, 2*(2/3)*(3/4)/((2/3)+(3/4)))
 
 if __name__ == '__main__':
     log.set_default_logger('DEBUG')

@@ -57,12 +57,14 @@ class NodeV2(Node):
 
 class SortApproachDataLoader(BaseDataLoader):
 
-    def load_data_for_numba_runtime(self, image_id, split_char):
-        return self.load_data(image_id, split_char)
+    def load_data_for_numba_runtime(self, image_id, split_char, *args, **kwargs):
+        return self.load_data(image_id, split_char, *args, **kwargs)
         
-    def load_data(self, image_id, split_char):
+    def load_data(self, image_id, split_char, base_dir=None):
         self.logger.debug(f'Start loading data')
-        p = os.path.join(os.getcwd(), 'data', 'preprocessed', f'gt_{image_id}.txt')
+        if base_dir is None:
+            base_dir = os.path.join(os.getcwd(), 'data', 'preprocessed')
+        p = os.path.join(base_dir, f'gt_{image_id}.txt')
         gts = []
         with open(p, 'r') as f:
             line = f.readline()
@@ -71,7 +73,7 @@ class SortApproachDataLoader(BaseDataLoader):
                 gt = NodeV2(**gt)
                 gts.append(gt)
                 line = f.readline()
-        p = os.path.join(os.getcwd(), 'data', 'preprocessed', f'pred_{image_id}.txt')
+        p = os.path.join(base_dir, f'pred_{image_id}.txt')
         preds = []
         with open(p, 'r') as f:
             line = f.readline()
@@ -191,7 +193,7 @@ class ApproachSort(Approach):
             elif cond == 'bottom':
                 return pred.right_bottom[1] > gt.left_top[1]
 
-        def fill(pred, gt, cond):
+        def fill(gt, pred, cond):
             if cond == 'left':
                 pred.add_candidate_filtered_by_left(gt)
             elif cond == 'top':
@@ -211,7 +213,7 @@ class ApproachSort(Approach):
                 else:
                     _l = _mid + 1
             for gt in sorted_gts[_l:]:
-                fill(pred, gt, cond)
+                fill(gt, pred, cond)
 
     def binary_search_by_sorted_preds(self, sorted_preds, gts, cond):
 
