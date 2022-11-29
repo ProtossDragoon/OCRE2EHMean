@@ -1,4 +1,5 @@
 # 내장
+import os
 import time
 import unittest
 
@@ -25,7 +26,8 @@ class RaySpeedTest(unittest.TestCase):
         s = time.time()
         for image_id in tqdm.tqdm(self.image_ids):
             _ = start(
-                image_id, *args, **kwargs
+                image_id, *args, 
+                base_dir=os.path.join(os.getcwd(), 'data', 'test', 'preprocessed'), **kwargs
             )
         e = time.time()
         time_single_process = e - s
@@ -37,7 +39,8 @@ class RaySpeedTest(unittest.TestCase):
         promise_li = []
         for image_id in self.image_ids:
             promise_li.append(start_parallel.remote(
-                image_id, *args, **kwargs
+                image_id, *args, 
+                base_dir=os.path.join(os.getcwd(), 'data', 'test', 'preprocessed'), **kwargs
             ))
         _ = wait(promise_li)
         e = time.time()
@@ -51,6 +54,7 @@ class RaySpeedTest(unittest.TestCase):
                 image_id, 
                 runtime.PythonRuntime, 
                 approach.ApproachSort,
+                base_dir=os.path.join(os.getcwd(), 'data', 'test', 'preprocessed'),
             ))
         res_matrix_singlecore = matrix.Matrix.merge(res_li_singlecore)
         promise_li = []
@@ -59,6 +63,7 @@ class RaySpeedTest(unittest.TestCase):
                 image_id, 
                 runtime.PythonRuntime, 
                 approach.ApproachSort,
+                base_dir=os.path.join(os.getcwd(), 'data', 'test', 'preprocessed'),
             ))
         res_li_multicore = wait(promise_li, lambda x: x)
         res_matrix_multicore = matrix.Matrix.merge(res_li_multicore)
