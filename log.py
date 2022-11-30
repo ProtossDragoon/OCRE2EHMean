@@ -1,3 +1,4 @@
+import sys
 import logging
 
 
@@ -25,9 +26,14 @@ class CustomFormatter(logging.Formatter):
         return formatter.format(record)
 
 
-def set_default_logger(level=logging.INFO):
+def set_default_logger(level=logging.INFO, logfile_path='e2e.log'):
     logger = logging.getLogger()
     logger.setLevel(level=level)
-    handler = logging.StreamHandler()
-    handler.setFormatter(CustomFormatter())
-    logger.addHandler(handler)
+    
+    consoleHandler = logging.StreamHandler(stream=sys.stdout)
+    consoleHandler.setFormatter(CustomFormatter())
+    logger.addHandler(consoleHandler)
+    
+    fileHandler = logging.FileHandler(filename=logfile_path, encoding='utf-8-sig')
+    fileHandler.setFormatter(CustomFormatter())
+    logger.addHandler(fileHandler)
