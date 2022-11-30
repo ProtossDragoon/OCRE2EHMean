@@ -44,5 +44,29 @@
             "console": "integratedTerminal",
             "justMyCode": true
         },
+        {
+            "name": "Aihub Fianance E2E",
+            "type": "python",
+            "request": "launch",
+            "module": "main",
+            "args": [
+                "/root/dev/oss/src_mmocr/data/e2ef1/aihub_finance/part_100of100/test/gts",
+                "/root/dev/oss/src_mmocr/data/e2ef1/aihub_finance/part_100of100/test/preds",
+                "/root/dev/oss/src_mmocr/data/e2ef1/aihub_finance/part_100of100/test/matrix",
+            ],
+            "justMyCode": true
+        },
+        {
+            "name": "Aihub Transit E2E",
+            "type": "python",
+            "request": "launch",
+            "module": "main",
+            "args": [
+                "/root/dev/oss/src_mmocr/data/e2ef1/aihub_transit/part_100of100/test/gts",
+                "/root/dev/oss/src_mmocr/data/e2ef1/aihub_transit/part_100of100/test/preds",
+                "/root/dev/oss/src_mmocr/data/e2ef1/aihub_transit/part_100of100/test/matrix",
+            ],
+            "justMyCode": true
+        }        
     ]
 }

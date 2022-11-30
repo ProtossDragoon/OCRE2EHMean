@@ -60,11 +60,19 @@ class SortApproachDataLoader(BaseDataLoader):
     def load_data_for_numba_runtime(self, image_id, split_char, *args, **kwargs):
         return self.load_data(image_id, split_char, *args, **kwargs)
         
-    def load_data(self, image_id, split_char, base_dir=None):
+    def load_data(self, image_id, split_char, base_dir=None, 
+                  gt_base_dir=None, pred_base_dir=None,
+                  gt_name=None, pred_name=None):
         self.logger.debug(f'Start loading data')
         if base_dir is None:
             base_dir = os.path.join(os.getcwd(), 'data', 'preprocessed')
-        p = os.path.join(base_dir, f'gt_{image_id}.txt')
+        if gt_base_dir is not None:
+            base_dir = gt_base_dir
+        if gt_name is not None:
+            name = gt_name
+        else:
+            name = f'gt_{image_id}.txt'
+        p = os.path.join(base_dir, name)
         gts = []
         with open(p, 'r', encoding='utf-8-sig') as f:
             line = f.readline()
@@ -73,7 +81,13 @@ class SortApproachDataLoader(BaseDataLoader):
                 gt = NodeV2(**gt)
                 gts.append(gt)
                 line = f.readline()
-        p = os.path.join(base_dir, f'pred_{image_id}.txt')
+        if pred_base_dir is not None:
+            base_dir = pred_base_dir
+        if pred_name is not None:
+            name = pred_name
+        else:
+            name = f'pred_{image_id}.txt'
+        p = os.path.join(base_dir, name)
         preds = []
         with open(p, 'r', encoding='utf-8-sig') as f:
             line = f.readline()

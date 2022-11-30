@@ -67,13 +67,23 @@ def start(
     *args, **kwargs,
 ):
     matrix_save_dir = kwargs.pop('matrix_save_dir', None)
+    gt_name = kwargs.pop('gt_name', None)
+    pred_name = kwargs.pop('pred_name', None)
     runtime.GlobalRuntime.set_mode(runtime_)
     gts, preds = approach_.load_data(image_id, 
                                      split_char=',',
-                                     base_dir=kwargs.pop('base_dir', None))
+                                     base_dir=kwargs.pop('base_dir', None),
+                                     gt_base_dir=kwargs.pop('gt_base_dir', None),
+                                     pred_base_dir=kwargs.pop('pred_base_dir', None),
+                                     gt_name=gt_name,
+                                     pred_name=pred_name,)
     runner = approach_(gts, preds, *args, **kwargs)
     mat = runner.run()
     if matrix_save_dir:
-        fname = f'{image_id}.json'
+        if gt_name and pred_name:
+            assert gt_name == pred_name, f'{gt_name} != {pred_name}'
+            fname = f"{gt_name.replace('.txt', '')}.json"
+        else:
+            fname = f'{image_id}.json'
         mat.save(matrix_save_dir, fname)
     return mat
