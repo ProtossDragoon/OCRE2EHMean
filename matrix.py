@@ -1,5 +1,7 @@
 # 내부
 import itertools
+import os
+import json
 
 # 서드파티
 import numba
@@ -126,20 +128,37 @@ class Matrix():
     DONTCARE_INDICATOR = '###'
 
     def __init__(self):
+        self._metric_metainfo = {}
+        
         # NOTE: 전체 예측 bbox 의 수
         self.n_words_pred = 0 
+        self._metric_metainfo.update({
+            'n_words_pred': \
+                '전체 예측 bbox 의 수'})
         
         # NOTE: 전체 정답 bbox 의 수 - don’t care bbox 의 수
         self.n_words_gt = 0 
+        self._metric_metainfo.update({
+            'n_words_gt': \
+                '전체 정답 bbox 의 수 - don’t care bbox 의 수'})
         
-        # NOTE: (1) IoU > 0.5, (2) 텍스트 일치 → 정답값과 매칭 쌍이 생성된 예측 bbox 의 수
+        # NOTE: (1:IoU > 0.5) and (2:텍스트 일치) → 정답값과 매칭 쌍이 생성된 예측 bbox 의 수
         self.n_words_matched_pred = 0 
+        self._metric_metainfo.update({
+            'n_words_matched_pred': \
+                '(1:IoU > 0.5) and (2:텍스트 일치) → 정답값과 매칭 쌍이 생성된 예측 bbox 의 수'})
         
-        # NOTE: (1) IoU > 0.5, (2) 텍스트 일치 → 예측값과 매칭 쌍이 생성된 정답 bbox 의 수
+        # NOTE: (1:IoU > 0.5) and (2:텍스트 일치) → 예측값과 매칭 쌍이 생성된 정답 bbox 의 수
         self.n_words_matched_gt = 0
+        self._metric_metainfo.update({
+            'n_words_matched_gt': \
+                '(1:IoU > 0.5) and (2:텍스트 일치) → 예측값과 매칭 쌍이 생성된 정답 bbox 의 수'})
         
-        # NOTE: 매칭 쌍이 생성되지 않은 bbox 중, (1) IoU > 0.5, ~(2) 인 대신 (3) dontcare bbox 에 예측을 제시한 bbox 의 수
-        self.n_words_passediou_but_dontcare_pred = 0 
+        # NOTE: 매칭 쌍이 생성되지 않은 bbox 중, (1:IoU > 0.5) and (not2:텍스트 볼일치) 인 대신 (3) dontcare bbox 에 예측을 제시한 bbox 의 수
+        self.n_words_passediou_but_dontcare_pred = 0
+        self._metric_metainfo.update({
+            'n_words_passediou_but_dontcare_pred': \
+                '매칭 쌍이 생성되지 않은 bbox 중, (1:IoU > 0.5) and (not2:텍스트 볼일치) 인 대신 (3) dontcare bbox 에 예측을 제시한 bbox 의 수'})
     
     @property
     def precision(self):
@@ -164,6 +183,44 @@ class Matrix():
         if p + r == 0:
             return 0
         return 2*p*r / (p+r)
+    
+    def save(self, dir, fname):
+        # write as jsonfile
+        d = {
+            'n_words_pred': {
+                'cnt': self.n_words_pred,
+                'info': self._metric_metainfo['n_words_pred']
+                },
+            'n_words_gt': {
+                'cnt': self.n_words_gt,
+                'info': self._metric_metainfo['n_words_gt']
+                },
+            'n_words_matched_pred': {
+                'cnt': self.n_words_matched_pred,
+                'info': self._metric_metainfo['n_words_matched_pred']
+                },
+            'n_words_matched_gt': {
+                'cnt': self.n_words_matched_gt,
+                'info': self._metric_metainfo['n_words_matched_gt']
+                },
+            'n_words_passediou_but_dontcare_pred': {
+                'cnt': self.n_words_passediou_but_dontcare_pred,
+                'info': self._metric_metainfo['n_words_passediou_but_dontcare_pred']
+                },
+            'precision': {
+                'score': self.precision
+                },
+            'recall': {
+                'score': self.recall
+                },
+            'f1': {
+                'score': self.f1
+                }
+        }
+        os.makedirs(dir, exist_ok=True)
+        p = os.path.join(dir, fname)
+        with open(p, 'w', encoding='utf-8-sig') as f:
+            json.dump(d, f, indent=4, ensure_ascii=False)
     
     def update(self, preds, gts):
         # preds, gts are list or LinkedList

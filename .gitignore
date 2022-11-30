@@ -189,7 +189,8 @@ Temporary Items
 # data
 data/preprocessed
 data/real/*.json
-
+data/matrix
+result.json
 
 ##### Windows
 # Windows thumbnail cache files

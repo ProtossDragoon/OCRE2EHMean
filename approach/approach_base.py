@@ -66,9 +66,14 @@ def start(
     approach_: Approach,
     *args, **kwargs,
 ):
+    matrix_save_dir = kwargs.pop('matrix_save_dir', None)
     runtime.GlobalRuntime.set_mode(runtime_)
     gts, preds = approach_.load_data(image_id, 
                                      split_char=',',
                                      base_dir=kwargs.pop('base_dir', None))
     runner = approach_(gts, preds, *args, **kwargs)
-    return runner.run()
+    mat = runner.run()
+    if matrix_save_dir:
+        fname = f'{image_id}.json'
+        mat.save(matrix_save_dir, fname)
+    return mat

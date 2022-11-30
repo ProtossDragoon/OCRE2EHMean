@@ -34,10 +34,12 @@ if __name__ == '__main__':
             image_id,
             runtime.NumbaRuntime, 
             approach.ApproachSort,
+            # matrix_save_dir='./data/matrix',
         ))
     matrix_li = parallel.wait(promise_li)
-    metric = matrix.Matrix.merge(matrix_li)
-    print(f'Found {metric.n_words_pred} preds and {metric.n_words_gt} gts')
-    print(f'Precision:\t {metric.precision:4f}')
-    print(f'Recall:   \t {metric.recall:4f}')
-    print(f'F1:       \t {metric.f1:4f}')
+    mat = matrix.Matrix.merge(matrix_li)
+    print(f'Found {mat.n_words_pred} preds and {mat.n_words_gt} gts')
+    print(f'Precision:\t {mat.precision:4f}')
+    print(f'Recall:   \t {mat.recall:4f}')
+    print(f'F1:       \t {mat.f1:4f}')
+    mat.save('./', 'result.json')
