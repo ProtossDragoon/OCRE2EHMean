@@ -13,7 +13,7 @@ class TestDataUtil(unittest.TestCase):
         split_char = ','
 
         p = os.path.join(os.path.dirname(__file__), 'data', 'test', 'preprocessed', 'gt_0.txt')
-        with open(p, 'r') as f:
+        with open(p, 'r', encoding='utf-8-sig') as f:
             gt_it = iter([
                 'CARTOLER', 
                 '###',
@@ -35,7 +35,7 @@ class TestDataUtil(unittest.TestCase):
                 line = f.readline()
         
         p = os.path.join(os.path.dirname(__file__), 'data', 'test', 'preprocessed', 'pred_0.txt')
-        with open(p, 'r') as f:
+        with open(p, 'r', encoding='utf-8-sig') as f:
             prep_it = iter([
                 'CARTOLER',
                 'T',

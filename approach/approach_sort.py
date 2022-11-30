@@ -66,7 +66,7 @@ class SortApproachDataLoader(BaseDataLoader):
             base_dir = os.path.join(os.getcwd(), 'data', 'preprocessed')
         p = os.path.join(base_dir, f'gt_{image_id}.txt')
         gts = []
-        with open(p, 'r') as f:
+        with open(p, 'r', encoding='utf-8-sig') as f:
             line = f.readline()
             while line:
                 gt = parse.parse_data(line, split_char)
@@ -75,7 +75,7 @@ class SortApproachDataLoader(BaseDataLoader):
                 line = f.readline()
         p = os.path.join(base_dir, f'pred_{image_id}.txt')
         preds = []
-        with open(p, 'r') as f:
+        with open(p, 'r', encoding='utf-8-sig') as f:
             line = f.readline()
             while line:
                 pred = parse.parse_data(line, split_char)
