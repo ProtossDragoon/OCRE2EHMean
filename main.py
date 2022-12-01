@@ -19,6 +19,7 @@ def parse_args():
     parser.add_argument('gt_base_dir')
     parser.add_argument('pred_base_dir')
     parser.add_argument('matrix_save_dir')
+    parser.add_argument('--debug', action='store_true')
     parser.add_argument('--logfile_path', default='e2e.log', type=str)
     args = parser.parse_args()
     return args
@@ -45,8 +46,10 @@ def get_image_names(
     # load file names from gt_base_dir
     gt_files = os.listdir(gt_base_dir)
     pred_files = os.listdir(pred_base_dir)
-    gt_files.sort(key=lambda x: int(re.findall(r'\d+', x)[0]))
-    pred_files.sort(key=lambda x: int(re.findall(r'\d+', x)[0]))
+    gt_files = sorted(gt_files)
+    pred_files = sorted(pred_files)
+    # gt_files.sort(key=lambda x: int(re.findall(r'\d+', x)[0]))
+    # pred_files.sort(key=lambda x: int(re.findall(r'\d+', x)[0]))
     assert len(gt_files) == len(pred_files), (
         f'gt_files and pred_files are not same length ({len(gt_files)} != {len(pred_files)})')
     for gt_file, pred_file in (zip(gt_files, pred_files)):
@@ -65,6 +68,11 @@ if __name__ == '__main__':
         args.gt_base_dir,
         args.pred_base_dir,
     ))):
+        if args.debug:
+            logger.info(f'gt_file_name:\t {gt_file_name}')
+            logger.info(f'pred_file_name:\t {gt_file_name}')
+            if i == 10:
+                break
         promise_li.append(parallel.start_parallel.remote(
             i,
             runtime.NumbaRuntime, 
